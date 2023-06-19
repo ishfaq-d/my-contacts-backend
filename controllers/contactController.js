@@ -4,7 +4,7 @@ const Contact = require('../models/contactModel');
 
 const getContacts = asyncHandler(async (req, res) => {
 
-    const contacts = await Contact.find();
+    const contacts = await Contact.find({ user_id: req.user.id});
     res.status(200).json(contacts);
 });
 
@@ -46,13 +46,14 @@ const updateContact = asyncHandler(async (req, res) => {
         throw new Error('contact not found');
     }
 
-    const udpatedContact = await Contact.findByIdAndUpdate(
-        reg.params.id,
+    const updatedContact = await Contact.findByIdAndUpdate(
+        req.params.id,
         req.body,
         {new: true}
     );
+    
+        res.status(200).json(updatedContact);
 
-    res.status(200).json(udpatedContact);
 });
 
 const deleteContact = asyncHandler(async (req, res) => {
@@ -65,7 +66,7 @@ const deleteContact = asyncHandler(async (req, res) => {
         throw new Error('contact not found');
     }
 
-    await Contact.remove();
+    await Contact.deleteOne();
 
     res.status(200).json(contact);
 });
